@@ -1,0 +1,66 @@
+---
+# tasks file for role
+
+- name: configure CTF flags
+  block:
+    - name: create ctf flag serial file
+      ansible.builtin.template:
+        src: serial.txt.j2
+        dest: /root/flags_serial.txt
+        owner: root
+        group: root
+        mode: '644'
+      register: serial_changed
+
+    - name: generate ctf flag string for all
+      shell: 'echo "{{ flags_secret }}{{ item.name }}$(cat /etc/machine-id)$(date)" | sha256sum'
+      register: flag_strings
+      with_items: "{{ flags_files_all }}"
+      when: serial_changed.changed
+
+    - name: create ctf flags for all
+      ansible.builtin.template:
+        src: flags.txt.j2
+        dest: "{{ item.path }}"
+        owner: "{{ item.owner }}"
+        group: "{{ item.group }}"
+        mode: "{{ item.mode }}"
+      with_items: "{{ flags_files_all }}"
+      when: serial_changed.changed
+
+    - name: generate ctf flag string for groups
+      shell: 'echo "{{ flags_secret }}{{ item }}$(cat /etc/machine-id)$(date)" | sha256sum'
+      register: flag_strings
+      with_items: "{{ flags_files_group }}"
+      when: serial_changed.changed
+
+    - name: create ctf flags for groups
+      ansible.builtin.template:
+        src: flags.txt.j2
+        dest: "{{ item.path }}"
+        owner: "{{ item.owner }}"
+        group: "{{ item.group }}"
+        mode: "{{ item.mode }}"
+      with_items: "{{ flags_files_group }}"
+      when: serial_changed.changed
+
+    - name: generate ctf flag string for hosts
+      shell: 'echo "{{ flags_secret }}{{ item }}$(cat /etc/machine-id)$(date)" | sha256sum'
+      register: flag_strings
+      with_items: "{{ flags_files_host }}"
+      when: serial_changed.changed
+
+    - name: create ctf flags for hosts
+      ansible.builtin.template:
+        src: flags.txt.j2
+        dest: "{{ item.path }}"
+        owner: "{{ item.owner }}"
+        group: "{{ item.group }}"
+        mode: "{{ item.mode }}"
+      with_items: "{{ flags_files_host }}"
+  tags:
+    - ctf
+    - flags
+  when:
+    - flags_create
+

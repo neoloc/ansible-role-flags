@@ -1,0 +1,28 @@
+---
+galaxy_info:
+  role_name: flags
+  author: neoloc
+  description: A role to create CTF flags for friendly hacking sessions
+  license: "license (BSD, MIT)"
+  min_ansible_version: 2.4
+  github_branch: master
+
+  platforms:
+    - name: EL
+      versions:
+      - 7
+      - 8
+    - name: Fedora
+      versions:
+      - 30
+      - 31
+      - 32
+      - 33
+      - 34
+    - name: Ubuntu
+      versions:
+      - all
+      - xenial
+    - name: Debian
+      versions:
+      - bullseye

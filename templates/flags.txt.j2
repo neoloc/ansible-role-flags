@@ -1,0 +1,8 @@
+# {{ ansible_managed }}
+# Do not change file directly, changes will be overwritten.
+
+{% for result in flag_strings.results %}
+{% if result.item.name == item.name %}
+FLAG: {{ item.name }}:{{ result.stdout }}
+{% endif %}
+{% endfor %}
